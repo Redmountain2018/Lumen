@@ -1,0 +1,241 @@
+{
+  "options.video.category.gameplay": "Game Play",
+  "options.video.category.window": "Window",
+  "options.video.category.ray_tracing": "Ray Tracing",
+  "options.video.category.upscaler": "Upscaler",
+  "options.video.category.terrain": "Terrain Build",
+  "options.video.category.pipeline": "Pipeline Setup",
+  "options.video.category.environment": "Environmental Settings",
+  "options.video.category.camera_controls": "Camera Controls",
+  "options.video.ray_bounces": "Ray Bounces",
+  "options.video.omm_enabled": "Opacity Micro Maps (OMM)",
+  "options.video.omm_baker_level": "OMM Subdivision Level",
+  "options.video.simplified_indirect": "Simplified Indirect Lighting",
+  "options.video.output_scale_2x": "Output Scale 2x",
+  "options.video.chunk_building_batch_size": "Amount of chunks to build in a single submit",
+  "options.video.chunk_building_total_batches": "Amount of building chunk batches",
+  "options.video.pipeline_setup": "Setup Pipeline...",
+  "render_pipeline_screen.back": "Back",
+  "render_pipeline_screen.save_and_build": "Save & Build",
+  "render_pipeline_screen.reload": "Reload",
+  "render_pipeline_screen.add_module": "Add Module",
+  "render_pipeline_screen.back_hint": "Experimental Render Pipeline Screen (press ESC or click Back to return)",
+  "render_pipeline.module.dlss.name": "DLSS",
+  "render_pipeline.module.dlss.attribute.mode": "Mode",
+  "render_pipeline.module.dlss.attribute.mode.performance": "Performance",
+  "render_pipeline.module.dlss.attribute.mode.balanced": "Balanced",
+  "render_pipeline.module.dlss.attribute.mode.quality": "Quality",
+  "render_pipeline.module.dlss.attribute.mode.dlaa": "DLAA",
+  "render_pipeline.module.ray_tracing.name": "Ray Tracing",
+  "render_pipeline.module.ray_tracing.attribute.num_ray_bounces": "Num Ray Bounces",
+  "render_pipeline.module.ray_tracing.attribute.use_jitter": "Use Jitter",
+  "render_pipeline.module.temporal_accumulation.name": "Temporal Accumulation",
+  "render_pipeline.module.tone_mapping.name": "Tone Mapping",
+  "render_pipeline.module.tone_mapping.attribute.middle_grey": "Middle Grey",
+  "render_pipeline.module.tone_mapping.attribute.exposure_up_speed": "Exposure Up Speed",
+  "render_pipeline.module.tone_mapping.attribute.exposure_down_speed": "Exposure Down Speed",
+  "render_pipeline.module.post_render.name": "Post Render",
+  "render_pipeline.module.fsr3_upscaler.name": "FSR3 Upscaler",
+  "render_pipeline.module.fsr3_upscaler.attribute.enable": "Enable FSR3 Upscaler",
+  "render_pipeline.module.fsr3_upscaler.attribute.quality_mode": "Quality Mode",
+  "render_pipeline.module.fsr3_upscaler.attribute.quality_mode.native": "Native AA",
+  "render_pipeline.module.fsr3_upscaler.attribute.quality_mode.quality": "Quality (Experimental)",
+  "render_pipeline.module.fsr3_upscaler.attribute.quality_mode.balanced": "Balanced (Experimental)",
+  "render_pipeline.module.fsr3_upscaler.attribute.quality_mode.performance": "Performance (Experimental)",
+  "render_pipeline.module.fsr3_upscaler.attribute.quality_mode.ultra": "Ultra Performance (Experimental)",
+  "render_pipeline.module.fsr3_upscaler.attribute.sharpness": "Sharpness",
+  "render_pipeline.module.nrd.name": "NRD",
+  "render_pipeline.module.nrd.attribute.max_accumulated_frame_num": "Max Accumulated Frames",
+  "render_pipeline.module.nrd.attribute.max_fast_accumulated_frame_num": "Max Fast Accumulated Frames",
+  "render_pipeline.module.nrd.attribute.min_blur_radius": "Min Blur Radius",
+  "render_pipeline.module.nrd.attribute.max_blur_radius": "Max Blur Radius",
+  "render_pipeline.module.nrd.attribute.enable_anti_firefly": "Enable Anti-Firefly",
+  "render_pipeline.module.nrd.attribute.hit_distance_reconstruction_mode": "Hit Distance Reconstruction Mode",
+  "render_pipeline.module.temporal_accumulation.attribute.alpha": "Alpha (History Weight)",
+  "render_pipeline.module.temporal_accumulation.attribute.depth_threshold": "Depth Threshold",
+  "render_pipeline.module.temporal_accumulation.attribute.depth_scale": "Depth Scale",
+  "module_attribute_screen.no_attributes": "No Attributes",
+
+  "radiance.settings.title": "Radiance Settings",
+  "radiance.settings.camera_controls.title": "Camera Controls",
+  "radiance.settings.exposure.title": "Exposure",
+  "radiance.settings.post_processing.title": "Post Processing",
+  "options.video.camera_controls": "Camera Controls...",
+  "options.video.camera_controls.exposure": "Exposure...",
+  "options.video.camera_controls.post_processing": "Post Processing...",
+  "options.video.category.exposure": "Exposure",
+  "options.video.category.post_processing": "Post Processing",
+  "options.video.category.tonemapping": "Tonemapping",
+  "options.video.tonemap_mode": "Tonemapping",
+  "options.video.tonemap_mode.pbr_neutral": "PBR Neutral",
+  "options.video.tonemap_mode.reinhard_extended": "Reinhard Extended",
+  "options.video.tonemap_mode.aces": "ACES",
+  "options.video.tonemap_mode.agx": "AgX",
+  "options.video.tonemap_mode.lottes": "Lottes",
+  "options.video.tonemap_mode.frostbite": "Frostbite",
+  "options.video.tonemap_mode.uncharted2": "Uncharted 2",
+  "options.video.tonemap_mode.gt": "GT (Gran Turismo)",
+  "options.video.tonemap_mode.hdr_hermite_reinhard": "Hermite Spline Reinhard",
+  "options.video.tonemap_mode.hdr_reinhard_extended": "Reinhard Extended",
+  "options.video.tonemap_mode.hdr_bt2390": "BT.2390 EETF",
+  "options.video.tonemap_mode.hdr_frostbite": "Frostbite",
+  "options.video.min_exposure": "Min Exposure",
+  "options.video.max_exposure": "Max Exposure",
+  "options.video.sdr_transfer_function": "SDR Transfer Function",
+  "options.video.sdr_transfer_function.srgb": "sRGB",
+  "options.video.sdr_transfer_function.gamma22": "Gamma 2.2",
+  "options.video.saturation": "Color Expansion",
+  "options.video.exposure_compensation": "Exposure Compensation",
+  "options.video.manual_exposure_enabled": "Manual Exposure",
+  "options.video.manual_exposure": "Manual Exposure Value",
+  "options.video.cas_enabled": "AMD FidelityFX CAS",
+  "options.video.cas_sharpness": "CAS Sharpness",
+  "options.video.legacy_exposure": "Legacy Exposure",
+  "options.video.exposure_up_speed": "Exposure Up Speed",
+  "options.video.exposure_down_speed": "Exposure Down Speed",
+  "options.video.exposure_bright_adapt_boost": "Bright Adapt Boost",
+  "options.video.exposure_highlight_protection": "Highlight Protection",
+  "options.video.exposure_highlight_percentile": "Highlight Percentile",
+  "options.video.exposure_highlight_smooth_speed": "Highlight Smooth Speed",
+  "options.video.exposure_log2_max": "Histogram Max EV",
+  "options.video.middle_grey": "Middle Grey",
+  "options.video.lwhite": "White Point",
+  "key.radiance.settings": "Radiance Settings",
+  "key.category.radiance": "Radiance",
+  "render_pipeline.module.tone_mapping.attribute.tonemap_mode": "Tonemapping Mode",
+  "render_pipeline.module.tone_mapping.attribute.tonemap_mode.pbr_neutral": "PBR Neutral",
+  "render_pipeline.module.tone_mapping.attribute.tonemap_mode.reinhard_extended": "Reinhard Extended",
+  "render_pipeline.module.tone_mapping.attribute.lwhite": "White Point (Lwhite)",
+  "render_pipeline.module.tone_mapping.attribute.max_exposure": "Max Exposure",
+  "render_pipeline.module.tone_mapping.attribute.tonemap_mode.gt": "GT (Gran Turismo)",
+  "render_pipeline.module.tone_mapping.attribute.exposure_compensation": "Exposure Compensation",
+
+  "options.video.upscaler_mode": "Upscaler",
+  "options.video.upscaler_mode.off": "Off",
+  "options.video.upscaler_mode.fsr3": "FSR3",
+  "options.video.upscaler_mode.dlss_sr": "DLSS (Ray Reconstruction)",
+  "options.video.upscaler_quality": "Upscaler Quality",
+  "options.video.upscaler_quality.performance": "Performance",
+  "options.video.upscaler_quality.balanced": "Balanced",
+  "options.video.upscaler_quality.quality": "Quality",
+  "options.video.upscaler_quality.native": "Native",
+  "options.video.upscaler_quality.custom": "Custom",
+  "options.video.upscaler_res_override": "Resolution Override",
+  "options.video.upscaler_preset": "Upscaler Preset",
+
+  "options.video.dlss_d_enabled": "DLSS-D (Ray Reconstruction)",
+
+  "options.video.reflex_enabled": "NVIDIA Reflex",
+  "options.video.reflex_boost": "Reflex Boost",
+  "options.video.vrr_mode": "VRR Frame Cap",
+
+  "options.video.category.hdr": "HDR Output",
+  "options.video.hdr_enabled": "HDR10 Output",
+  "options.video.hdr_peak_nits": "Peak Brightness",
+  "options.video.hdr_paper_white_nits": "Paper White",
+  "options.video.hdr_ui_brightness_nits": "UI Brightness",
+  "options.video.category.emission": "Emission Settings",
+  "options.video.emission_settings": "Emission Settings...",
+  "radiance.settings.emission.title": "Emission Settings",
+  "options.video.emission.lava": "Lava",
+  "options.video.emission.fire": "Fire",
+  "options.video.emission.soul_fire": "Soul Fire",
+  "options.video.emission.torch": "Torch",
+  "options.video.emission.soul_torch": "Soul Torch",
+  "options.video.emission.lantern": "Lantern",
+  "options.video.emission.soul_lantern": "Soul Lantern",
+  "options.video.emission.campfire": "Campfire",
+  "options.video.emission.soul_campfire": "Soul Campfire",
+  "options.video.emission.glowstone": "Glowstone",
+  "options.video.emission.shroomlight": "Shroomlight",
+  "options.video.emission.sea_lantern": "Sea Lantern",
+  "options.video.emission.froglight": "Froglight",
+  "options.video.emission.magma_block": "Magma Block",
+  "options.video.emission.beacon": "Beacon",
+  "options.video.emission.end_rod": "End Rod",
+  "options.video.emission.jack_o_lantern": "Jack o'Lantern",
+  "options.video.emission.nether_portal": "Nether Portal",
+  "options.video.emission.crying_obsidian": "Crying Obsidian",
+  "options.video.emission.respawn_anchor": "Respawn Anchor",
+  "options.video.emission.conduit": "Conduit",
+  "options.video.emission.amethyst_cluster": "Amethyst Cluster",
+  "options.video.emission.sculk_sensor": "Sculk Sensor",
+  "options.video.emission.sculk_catalyst": "Sculk Catalyst",
+  "options.video.emission.sculk_vein": "Sculk Vein",
+  "options.video.emission.sculk": "Sculk",
+  "options.video.emission.sculk_shrieker": "Sculk Shrieker",
+  "options.video.emission.brewing_stand": "Brewing Stand",
+  "options.video.emission.end_portal": "End Portal"
+  ,"options.video.environment_settings": "Environmental Settings..."
+  ,"options.video.environment.dimension": "Dimension"
+  ,"options.video.environment.dimension.overworld": "Overworld"
+  ,"options.video.environment.dimension.nether": "Nether"
+  ,"options.video.environment.dimension.end": "End"
+  ,"radiance.settings.environment.title": "Environmental Settings"
+  ,"radiance.settings.environment.sky.title": "Sky Settings"
+  ,"radiance.settings.environment.clouds.title": "Cloud Settings"
+  ,"radiance.settings.environment.water.title": "Water Settings"
+  ,"radiance.settings.environment.sun.title": "Sun Settings"
+  ,"radiance.settings.environment.moon.title": "Moon Settings"
+  ,"options.video.environment.sky_settings": "Sky Settings..."
+  ,"options.video.environment.cloud_settings": "Cloud Settings..."
+  ,"options.video.environment.water_settings": "Water Settings..."
+  ,"options.video.environment.sun_settings": "Sun Settings..."
+  ,"options.video.environment.moon_settings": "Moon Settings..."
+  ,"options.video.environment.sky.category": "Sky"
+  ,"options.video.environment.clouds.category": "Clouds"
+  ,"options.video.environment.water.category": "Water"
+  ,"options.video.environment.sun.category": "Sun"
+  ,"options.video.environment.moon.category": "Moon"
+  ,"options.video.environment.sky_brightness": "Sky Brightness"
+  ,"options.video.environment.rain_blend": "Rain Blend Strength"
+  ,"options.video.environment.cloud_brightness": "Cloud Brightness"
+  ,"options.video.environment.cloud_alpha": "Cloud Alpha"
+  ,"options.video.environment.cloud_height_offset": "Cloud Height Offset"
+  ,"options.video.environment.clouds.volumetric.category": "Volumetric (Fancy)"
+  ,"options.video.environment.cloud_puffiness": "Cloud Puffiness"
+  ,"options.video.environment.cloud_detail_scale": "Cloud Detail Scale"
+  ,"options.video.environment.cloud_detail_strength": "Cloud Detail Strength"
+  ,"options.video.environment.cloud_shadow_strength": "Cloud Shadow Strength"
+  ,"options.video.environment.cloud_thickness": "Cloud Thickness"
+  ,"options.video.environment.cloud_density": "Cloud Density"
+  ,"options.video.environment.cloud_shadow_noise": "Noise Affects Shadows"
+  ,"options.video.environment.water_tint_r": "Water Tint Red"
+  ,"options.video.environment.water_tint_g": "Water Tint Green"
+  ,"options.video.environment.water_tint_b": "Water Tint Blue"
+  ,"options.video.environment.water_fog_strength": "Water Fog Strength"
+  ,"options.video.environment.sun_size": "Sun Size"
+  ,"options.video.environment.sun_intensity": "Sun Intensity"
+  ,"options.video.environment.moon_size": "Moon Size"
+  ,"options.video.environment.moon_intensity": "Moon Intensity"
+
+  ,"radiance.dlss_missing.title": "DLSS Libraries Missing"
+  ,"radiance.dlss_missing.line1": "The DLSS runtime libraries were not found."
+  ,"radiance.dlss_missing.line2": "DLSS Ray Reconstruction will be unavailable until they are installed."
+  ,"radiance.dlss_missing.line3": "Download URL (click to copy):"
+  ,"radiance.dlss_missing.line4": "Place the files in (click to copy):"
+  ,"radiance.dlss_missing.copy_url": "Copy Download URL"
+  ,"radiance.dlss_missing.copy_path": "Copy Install Path"
+  ,"radiance.dlss_missing.copied": "✔ Copied to clipboard!"
+  ,"radiance.dlss_missing.recheck": "Re-check Now"
+  ,"radiance.dlss_missing.recheck_failed": "✘ Files not found — copy the DLLs first"
+  ,"options.video.dlss_missing_warning": "⚠ DLSS Files Missing — Click for Details & Copy Links"
+  ,"radiance.dlss_missing.menu_warning": "⚠ DLSS files missing — press O at boot for details"
+
+  ,"options.video.environment.sun.orbit_category": "Sun Orbit"
+  ,"options.video.environment.sun_path_mode": "Sun Path"
+  ,"options.video.environment.sun_path_mode.legacy": "Legacy (Overhead)"
+  ,"options.video.environment.sun_path_mode.physical": "Physical (Tilted)"
+  ,"options.video.environment.sun_inclination": "Inclination"
+  ,"options.video.environment.sun_azimuth_offset": "Azimuth Offset"
+  ,"options.video.environment.moon.orbit_category": "Moon Orbit"
+  ,"options.video.environment.moon_follow_sun": "Follow Sun"
+  ,"options.video.environment.moon_inclination": "Inclination"
+  ,"options.video.environment.moon_azimuth_offset": "Azimuth Offset"
+
+  ,"radiance.settings.reset_defaults": "Reset to Defaults"
+  ,"radiance.settings.welcome_message.on": "Welcome Message: On"
+  ,"radiance.settings.welcome_message.off": "Welcome Message: Off"
+  ,"radiance.welcome_message.line1": "\u00a7bRadiance\u00a7r \u2014 Press \u00a7eO\u00a7r to open the settings menu."
+  ,"radiance.welcome_message.line2": "\u00a77(Disable this message via Welcome Message in the O menu.)\u00a7r"
+}
