@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.Identifier;
 import net.minecraft.client.option.CloudRenderMode;
 import net.minecraft.client.render.BackgroundRenderer;
 import net.minecraft.client.render.BuiltChunkStorage;
@@ -249,8 +250,10 @@ public abstract class WorldRendererMixins {
             .getGlId();
         int endPortalTextureID = textureManager.getTexture(
             EndPortalBlockEntityRenderer.PORTAL_TEXTURE).getGlId();
+        int rippleTextureID = textureManager.getTexture(
+            Identifier.of("radiance", "textures/ripple_animation2.png")).getGlId();
         BufferProxy.updateWorldUniform(camera, viewMatrix, effectedViewMatrix, projectionMatrix,
-            overlayTextureID, fog, world, endSkyTextureID, endPortalTextureID);
+            overlayTextureID, fog, world, endSkyTextureID, endPortalTextureID, rippleTextureID);
 
         // Sky
         float tickDelta = tickCounter.getTickDelta(false);

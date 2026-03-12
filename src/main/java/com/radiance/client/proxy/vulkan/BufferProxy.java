@@ -203,7 +203,7 @@ public class BufferProxy {
 
     public static void updateWorldUniform(Camera camera, Matrix4f viewMatrix,
         Matrix4f effectedViewMatrix, Matrix4f projectionMatrix, int overlayTextureID, Fog fog,
-        ClientWorld world, int endSkyTextureID, int endPortalTextureID) {
+        ClientWorld world, int endSkyTextureID, int endPortalTextureID, int rippleTextureID) {
         try (MemoryStack stack = stackPush()) {
             int size = 560;
             ByteBuffer bb = stack.malloc(size);
@@ -269,6 +269,7 @@ public class BufferProxy {
             baseAddr += Integer.BYTES;
             bb.putInt(baseAddr, endPortalTextureID);
             baseAddr += Integer.BYTES;
+            bb.putInt(baseAddr, rippleTextureID);
             baseAddr += Integer.BYTES;
             baseAddr += Integer.BYTES;
 
