@@ -101,8 +101,24 @@ public class RadianceSettingsScreen extends GameOptionsScreen {
         this.body.addEntry(
             new CategoryVideoOptionEntry(Text.translatable(Options.CATEGORY_TONEMAPPING), body));
 
-        // Tone mapper mode selection is intentionally hidden.
         // SDR output is driven by the HDR pipeline tonemap for parity.
+
+        String[] tonemapModeKeys = {
+            Options.TONEMAP_MODE_PBR_NEUTRAL,
+            Options.TONEMAP_MODE_REINHARD_EXTENDED,
+            Options.TONEMAP_MODE_ACES,
+        };
+        SimpleOption<Integer> tonemapModeOption = new SimpleOption<>(
+            Options.TONEMAP_MODE_KEY,
+            SimpleOption.emptyTooltip(),
+            (optionText, value) -> getGenericValueText(optionText,
+                Text.translatable(tonemapModeKeys[Math.min(value, tonemapModeKeys.length - 1)])),
+            new SimpleOption.ValidatingIntSliderCallbacks(0, tonemapModeKeys.length - 1),
+            Codec.intRange(0, tonemapModeKeys.length - 1),
+            Options.tonemappingMode,
+            value -> Options.setTonemappingMode(value, true));
+        this.body.addSingleOptionEntry(tonemapModeOption);
+
 
         SimpleOption<Integer> sdrTransferFn = new SimpleOption<>(
             Options.SDR_TRANSFER_FUNCTION_KEY,
