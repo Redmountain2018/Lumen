@@ -6,6 +6,7 @@
   "options.video.category.upscaler": "超分",
   "options.video.category.terrain": "地形构建",
   "options.video.category.pipeline": "管线设置",
+  "options.video.category.settings": "Radiance 设置",
   "options.video.dlss_mode.performance.tooltip": "性能模式",
   "options.video.dlss_mode.balanced.tooltip": "平衡模式",
   "options.video.dlss_mode.quality.tooltip": "质量模式",
@@ -73,6 +74,8 @@
   "render_pipeline.module.temporal_accumulation.attribute.depth_threshold": "深度阈值",
   "render_pipeline.module.temporal_accumulation.attribute.depth_scale": "深度缩放",
   "module_attribute_screen.no_attributes": "无可用设置",
+
+  "radiance.settings.title": "Radiance 设置",
   "options.video.category.environment": "环境设置",
   "options.video.environment_settings": "环境设置...",
   "options.video.environment.dimension": "维度",
@@ -116,6 +119,8 @@
   "options.video.environment.sun_intensity": "太阳强度",
   "options.video.environment.moon_size": "月亮大小",
   "options.video.environment.moon_intensity": "月亮强度",
+
+  "key.radiance.settings": "Radiance 设置",
 
   "options.video.sdr_transfer_function": "SDR 传递函数",
   "options.video.sdr_transfer_function.srgb": "sRGB",

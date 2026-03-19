@@ -5,6 +5,7 @@ import static net.minecraft.client.option.InactivityFpsLimit.AFK;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
+import com.radiance.client.gui.RadianceSettingsScreen;
 import com.radiance.client.gui.PotentialValuesBasedCallbacksNoValue;
 import com.radiance.client.gui.RenderPipelineScreen;
 import com.radiance.client.option.Options;
@@ -159,14 +160,13 @@ public class VideoOptionsScreenMixins extends GameOptionsScreenMixins {
                     Options.setChunkBuildingTotalBatches(value, true);
                 });
 
-        SimpleOption<Boolean> pipelineSettings = new SimpleOption<>(Options.PIPELINE_SETUP_KEY,
+        SimpleOption<Boolean> radianceSettings = new SimpleOption<>(Options.KEY_RADIANCE_SETTINGS,
             SimpleOption.emptyTooltip(),
             (optionText, value) -> optionText,
             BOOLEAN_NO_KEY,
             false,
             value -> {
-                MinecraftClient.getInstance()
-                    .setScreen(new RenderPipelineScreen((VideoOptionsScreen) (Object) this));
+                MinecraftClient.getInstance().setScreen(new RadianceSettingsScreen((VideoOptionsScreen) (Object) this));
             });
 
         // Adding categories and options
@@ -211,8 +211,8 @@ public class VideoOptionsScreenMixins extends GameOptionsScreenMixins {
         this.body.addSingleOptionEntry(chunkBuildingTotalBatches);
 
         this.body.addEntry(
-            new CategoryVideoOptionEntry(Text.translatable(Options.CATEGORY_PIPELINE), body));
-        this.body.addSingleOptionEntry(pipelineSettings);
+            new CategoryVideoOptionEntry(Text.translatable(Options.CATEGORY_SETTINGS), body));
+        this.body.addSingleOptionEntry(radianceSettings);
 
         ci.cancel();
     }

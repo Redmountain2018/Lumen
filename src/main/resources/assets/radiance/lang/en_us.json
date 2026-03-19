@@ -6,6 +6,7 @@
   "options.video.category.terrain": "Terrain Build",
   "options.video.category.pipeline": "Pipeline Setup",
   "options.video.category.environment": "Environmental Settings",
+  "options.video.category.settings": "Radiance Settings",
   "options.video.category.camera_controls": "Camera Controls",
   "options.video.ray_bounces": "Ray Bounces",
   "options.video.omm_enabled": "Opacity Micro Maps (OMM)",

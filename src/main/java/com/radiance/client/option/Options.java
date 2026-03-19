@@ -37,6 +37,7 @@ public class Options {
     public static final String CATEGORY_HDR = "options.video.category.hdr";
     public static final String CATEGORY_PIPELINE = "options.video.category.pipeline";
     public static final String CATEGORY_ENVIRONMENT = "options.video.category.environment";
+    public static final String CATEGORY_SETTINGS = "options.video.category.settings";
 
     public static final String KEY_RADIANCE_SETTINGS = "key.radiance.settings";
     public static final String KEY_CATEGORY_RADIANCE = "key.category.radiance";
