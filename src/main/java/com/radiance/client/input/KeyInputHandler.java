@@ -12,12 +12,20 @@ import org.lwjgl.glfw.GLFW;
 public class KeyInputHandler {
 
     public static KeyBinding radianceSettingsKey;
+    public static KeyBinding radianceZoomKey;
 
     public static void register() {
         radianceSettingsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             Options.KEY_RADIANCE_SETTINGS,
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_O,
+            Options.KEY_CATEGORY_RADIANCE
+        ));
+
+        radianceZoomKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            Options.KEY_RADIANCE_ZOOM,
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_C,
             Options.KEY_CATEGORY_RADIANCE
         ));
 
@@ -28,5 +36,11 @@ public class KeyInputHandler {
                 }
             }
         });
+    }
+
+    public static boolean isZoomActive() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        return radianceZoomKey != null && radianceZoomKey.isPressed()
+            && client.player != null && client.currentScreen == null;
     }
 }

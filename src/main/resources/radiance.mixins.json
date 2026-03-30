@@ -46,6 +46,7 @@
     "vulkan_render_integration.GlStateManagerMixins",
     "vulkan_render_integration.GLXMixins",
     "vulkan_render_integration.HeldItemRendererMixins",
+    "vulkan_render_integration.InGameHudMixins",
     "vulkan_render_integration.ItemRendererMixins",
     "vulkan_render_integration.LightmapTextureManagerMixins",
     "vulkan_render_integration.LightningEntityRendererMixins",

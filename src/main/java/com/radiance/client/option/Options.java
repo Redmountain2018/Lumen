@@ -38,8 +38,11 @@ public class Options {
     public static final String CATEGORY_PIPELINE = "options.video.category.pipeline";
     public static final String CATEGORY_ENVIRONMENT = "options.video.category.environment";
     public static final String CATEGORY_SETTINGS = "options.video.category.settings";
+    public static final String CATEGORY_DEBUG = "options.video.category.debug";
+    public static final String SHOW_FPS_OVERLAY_KEY = "options.video.show_fps_overlay";
 
     public static final String KEY_RADIANCE_SETTINGS = "key.radiance.settings";
+    public static final String KEY_RADIANCE_ZOOM = "key.radiance.zoom";
     public static final String KEY_CATEGORY_RADIANCE = "key.category.radiance";
 
     public static final String CATEGORY_EMISSION = "options.video.category.emission";
@@ -219,6 +222,7 @@ public class Options {
 
     // Persistent UI state (not reset by Reset to Defaults)
     public static boolean showWelcomeMessage = true;
+    public static boolean showFpsOverlay = false;
 
     public static final int SUN_PATH_MODE_DEFAULT = 1;
     public static final int SUN_INCLINATION_DEFAULT = 23;
@@ -664,6 +668,7 @@ public class Options {
 
         // Persistent UI state
         props.setProperty("showWelcomeMessage", String.valueOf(showWelcomeMessage));
+        props.setProperty("showFpsOverlay", String.valueOf(showFpsOverlay));
 
         try {
             Files.createDirectories(path.getParent());
@@ -792,6 +797,8 @@ public class Options {
         // Persistent UI state
         showWelcomeMessage = Boolean.parseBoolean(
             props.getProperty("showWelcomeMessage", "true"));
+        showFpsOverlay = Boolean.parseBoolean(
+            props.getProperty("showFpsOverlay", String.valueOf(showFpsOverlay)));
     }
 
     private static void setEnvironmentDefaults() {
@@ -1191,6 +1198,11 @@ public class Options {
 
     public static void setMoonAzimuthOffsetDeg(int deg, boolean write) {
         moonAzimuthOffsetDeg = Math.max(-180, Math.min(180, deg));
+        if (write) overwriteConfig();
+    }
+
+    public static void setShowFpsOverlay(boolean enabled, boolean write) {
+        showFpsOverlay = enabled;
         if (write) overwriteConfig();
     }
 

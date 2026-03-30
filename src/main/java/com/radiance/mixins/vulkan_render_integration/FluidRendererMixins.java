@@ -22,6 +22,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockRenderView;
+import net.minecraft.client.render.RenderLayer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -133,6 +134,11 @@ public abstract class FluidRendererMixins {
         CallbackInfo ci) {
         boolean isLava = fluidState.isIn(FluidTags.LAVA);
         Sprite[] fluidSprites = isLava ? this.lavaSprites : this.waterSprites;
+        boolean isWaterMask = false;
+        if (vertexConsumer instanceof PBRVertexConsumer pbr) {
+            RenderLayer layer = pbr.getRenderLayer();
+            isWaterMask = layer != null && "world_water_mask".equals(layer.name);
+        }
         int tintColor = isLava ? 16777215 : BiomeColors.getWaterColor(world, pos);
         float emission = isLava ? Options.emissionLava : 0.0F;
         float red = (tintColor >> 16 & 0xFF) / 255.0F;
@@ -152,15 +158,31 @@ public abstract class FluidRendererMixins {
         BlockState stateEast = world.getBlockState(pos.offset(Direction.EAST));
         FluidState fluidEast = stateEast.getFluidState();
 
-        boolean renderTop = !isSameFluid(fluidState, fluidUp);
-        boolean
-            renderBottom =
-            shouldRenderSide(fluidState, blockState, Direction.DOWN, fluidDown) && !method_3344(
-                Direction.DOWN, 0.8888889F, stateDown);
-        boolean renderNorth = shouldRenderSide(fluidState, blockState, Direction.NORTH, fluidNorth);
-        boolean renderSouth = shouldRenderSide(fluidState, blockState, Direction.SOUTH, fluidSouth);
-        boolean renderWest = shouldRenderSide(fluidState, blockState, Direction.WEST, fluidWest);
-        boolean renderEast = shouldRenderSide(fluidState, blockState, Direction.EAST, fluidEast);
+        boolean boundaryUp = !isSameFluid(fluidState, fluidUp);
+        boolean boundaryDown = !isSameFluid(fluidState, fluidDown);
+        boolean boundaryNorth = !isSameFluid(fluidState, fluidNorth);
+        boolean boundarySouth = !isSameFluid(fluidState, fluidSouth);
+        boolean boundaryWest = !isSameFluid(fluidState, fluidWest);
+        boolean boundaryEast = !isSameFluid(fluidState, fluidEast);
+
+        boolean renderTop = boundaryUp;
+        boolean renderBottom = isWaterMask
+            ? boundaryDown
+            : shouldRenderSide(fluidState, blockState, Direction.DOWN, fluidDown)
+                && !method_3344(Direction.DOWN, 0.8888889F, stateDown);
+        boolean renderNorth = isWaterMask
+            ? boundaryNorth
+            : shouldRenderSide(fluidState, blockState, Direction.NORTH, fluidNorth);
+        boolean renderSouth = isWaterMask
+            ? boundarySouth
+            : shouldRenderSide(fluidState, blockState, Direction.SOUTH, fluidSouth);
+        boolean renderWest = isWaterMask
+            ? boundaryWest
+            : shouldRenderSide(fluidState, blockState, Direction.WEST, fluidWest);
+        boolean renderEast = isWaterMask
+            ? boundaryEast
+            : shouldRenderSide(fluidState, blockState, Direction.EAST, fluidEast);
+
 
         if (renderTop || renderBottom || renderEast || renderWest || renderNorth || renderSouth) {
             float lightDown = world.getBrightness(Direction.DOWN, true);
@@ -225,18 +247,21 @@ public abstract class FluidRendererMixins {
             float x = pos.getX() & 15;
             float y = pos.getY() & 15;
             float z = pos.getZ() & 15;
-            float bottomYOffset = renderBottom ? 0.001F : 0.0F;
+            float bottomYOffset = isWaterMask ? 0.0F : (renderBottom ? 0.001F : 0.0F);
 
             // ==========================================
             // 1. 渲染顶面 (Surface)
             // ==========================================
-            if (renderTop && !method_3344(Direction.UP,
-                Math.min(Math.min(heightNW, heightSW), Math.min(heightSE, heightNE)), stateUp)) {
-                // 稍微调低一点避免 Z-Fighting
-                heightNW -= 0.001F;
-                heightSW -= 0.001F;
-                heightSE -= 0.001F;
-                heightNE -= 0.001F;
+            if (renderTop && (isWaterMask || !method_3344(Direction.UP,
+                Math.min(Math.min(heightNW, heightSW), Math.min(heightSE, heightNE)), stateUp))) {
+                // 可见渲染才需要压低一点避免 Z-Fighting；water mask 需要真实边界位置
+                if (!isWaterMask) {
+                    heightNW -= 0.001F;
+                    heightSW -= 0.001F;
+                    heightSE -= 0.001F;
+                    heightNE -= 0.001F;
+                }
+
 
                 Vec3d flowVector = fluidState.getVelocity(world, pos);
                 float u1, v1, u2, v2, u3, v3, u4, v4; // 对应四个角的UV
@@ -533,8 +558,25 @@ u1 = stillSprite.getFrameU(0.0F);
                         shouldRenderSide = renderEast;
                 }
 
-                if (shouldRenderSide && !method_3344(direction, Math.max(yStart, yEnd),
-                    world.getBlockState(pos.offset(direction)))) {
+                if (isWaterMask) {
+                    if (direction == Direction.NORTH) {
+                        zStart = z;
+                        zEnd = z;
+                    } else if (direction == Direction.SOUTH) {
+                        zStart = z + 1.0F;
+                        zEnd = z + 1.0F;
+                    } else if (direction == Direction.WEST) {
+                        xStart = x;
+                        xEnd = x;
+                    } else if (direction == Direction.EAST) {
+                        xStart = x + 1.0F;
+                        xEnd = x + 1.0F;
+                    }
+                }
+
+
+                if (shouldRenderSide && (isWaterMask || !method_3344(direction, Math.max(yStart, yEnd),
+                    world.getBlockState(pos.offset(direction))))) {
                     BlockPos sidePos = pos.offset(direction);
                     Sprite sideSprite = fluidSprites[1];
                     if (!isLava) {

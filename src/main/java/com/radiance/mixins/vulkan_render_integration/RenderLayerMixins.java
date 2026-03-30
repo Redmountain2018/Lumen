@@ -10,9 +10,12 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.radiance.client.render.WorldWaterMaskLayers;
 
 @Mixin(RenderLayer.class)
 public class RenderLayerMixins {
@@ -41,5 +44,23 @@ public class RenderLayerMixins {
                         TriState.FALSE,
                         false))
                     .build(false));
+
+        RenderLayer worldWaterMaskLayer =
+            RenderLayer.of("world_water_mask",
+                VertexFormats.POSITION_TEXTURE_COLOR,
+                VertexFormat.DrawMode.QUADS,
+                1536,
+                false,
+                true,
+                RenderLayer.MultiPhaseParameters.builder()
+                    .program(RenderLayer.TRANSLUCENT_PROGRAM)
+                    .writeMaskState(RenderLayer.ALL_MASK)
+                    .transparency(RenderLayer.NO_TRANSPARENCY)
+                    .target(RenderLayer.ITEM_ENTITY_TARGET)
+                    .texture(RenderLayer.MIPMAP_BLOCK_ATLAS_TEXTURE)
+                    .lightmap(RenderLayer.ENABLE_LIGHTMAP)
+                    .build(false));
+
+        WorldWaterMaskLayers.setWorldWaterMaskLayer(worldWaterMaskLayer);
     }
 }

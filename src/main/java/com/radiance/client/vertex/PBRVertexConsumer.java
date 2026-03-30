@@ -42,6 +42,7 @@ public class PBRVertexConsumer implements VertexConsumer {
     private static final boolean LITTLE_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN;
 
     private final BufferAllocator allocator;
+    private final RenderLayer renderLayer;
     private final VertexFormat format;
     private final VertexFormat.DrawMode drawMode;
 
@@ -69,6 +70,7 @@ public class PBRVertexConsumer implements VertexConsumer {
         this.allocator = allocator;
         this.drawMode = drawMode;
         this.format = format;
+        this.renderLayer = renderLayer;
 
         this.vertexSizeByte = format.getVertexSizeByte();
         this.writableMask = format.getRequiredMask() & ~PBR_POS.getBit();
@@ -111,6 +113,10 @@ public class PBRVertexConsumer implements VertexConsumer {
 
     public int getVertexCount() {
         return this.vertexCount;
+    }
+
+    public RenderLayer getRenderLayer() {
+        return this.renderLayer;
     }
 
     public void setBase(float x, float y, float z) {

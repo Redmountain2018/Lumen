@@ -2,7 +2,11 @@ package com.radiance.mixins.vulkan_render_integration;
 
 import com.mojang.blaze3d.systems.VertexSorter;
 import com.radiance.client.vertex.PBRVertexConsumer;
+import com.radiance.client.render.WorldWaterMaskLayers;
+import com.radiance.client.proxy.world.ChunkOccupancyData;
+import com.radiance.client.proxy.world.ChunkOccupancyRegistry;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
+import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -20,6 +24,7 @@ import net.minecraft.client.render.chunk.SectionBuilder;
 import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.random.Random;
@@ -69,8 +74,15 @@ public abstract class SectionBuilderMixins {
                 .size());
         Random random = Random.create();
 
+        int[] waterOccupancy = new int[16 * 16 * 16];
+        int[] solidOccupancy = new int[16 * 16 * 16];
+
         for (BlockPos blockPos3 : BlockPos.iterate(blockPos, blockPos2)) {
             BlockState blockState = renderRegion.getBlockState(blockPos3);
+            int lx = ChunkSectionPos.getLocalCoord(blockPos3.getX());
+            int ly = ChunkSectionPos.getLocalCoord(blockPos3.getY());
+            int lz = ChunkSectionPos.getLocalCoord(blockPos3.getZ());
+            int occIndex = (ly << 8) | (lz << 4) | lx;
             if (blockState.isOpaqueFullCube()) {
                 chunkOcclusionDataBuilder.markClosed(blockPos3);
             }
@@ -83,6 +95,12 @@ public abstract class SectionBuilderMixins {
             }
 
             FluidState fluidState = blockState.getFluidState();
+            if (!fluidState.isEmpty() && (fluidState.isOf(Fluids.WATER) || fluidState.isOf(Fluids.FLOWING_WATER))) {
+                waterOccupancy[occIndex] = 1;
+            }
+            if (blockState.isOpaqueFullCube()) {
+                solidOccupancy[occIndex] = 1;
+            }
             if (!fluidState.isEmpty()) {
                 RenderLayer renderLayer = RenderLayers.getFluidLayer(fluidState);
                 PBRVertexConsumer bufferBuilder = this.beginBufferBuilding(map, allocatorStorage,
@@ -90,6 +108,8 @@ public abstract class SectionBuilderMixins {
                 this.blockRenderManager.renderFluid(blockPos3, renderRegion, bufferBuilder,
                     blockState, fluidState);
             }
+
+
 
             if (blockState.getRenderType() == BlockRenderType.MODEL) {
                 RenderLayer renderLayer = RenderLayers.getBlockLayer(blockState);
@@ -124,6 +144,8 @@ public abstract class SectionBuilderMixins {
 
         BlockModelRenderer.disableBrightnessCache();
         renderData.chunkOcclusionData = chunkOcclusionDataBuilder.build();
+        ChunkOccupancyRegistry.put(renderData,
+            new ChunkOccupancyData(waterOccupancy, solidOccupancy, 16, 16, 16));
         cir.setReturnValue(renderData);
     }
 
@@ -134,8 +156,16 @@ public abstract class SectionBuilderMixins {
         PBRVertexConsumer pbrVertexConsumer = builders.get(layer);
         if (pbrVertexConsumer == null) {
             BufferAllocator bufferAllocator = allocatorStorage.get(layer);
+            if (bufferAllocator == null) {
+                bufferAllocator = allocatorStorage.get(RenderLayer.getTranslucent());
+            }
+            if (bufferAllocator == null) {
+                throw new IllegalStateException(
+                    "No BufferAllocator for render layer: " + layer.name);
+            }
             pbrVertexConsumer = new PBRVertexConsumer(bufferAllocator, layer);
             builders.put(layer, pbrVertexConsumer);
+
         }
 
         return pbrVertexConsumer;

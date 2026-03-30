@@ -101,7 +101,9 @@
   "options.video.exposure_log2_max": "Histogram Max EV",
   "options.video.middle_grey": "Middle Grey",
   "options.video.lwhite": "White Point",
+  "options.video.category.debug": "Debug Settings",
   "key.radiance.settings": "Radiance Settings",
+  "key.radiance.zoom": "Zoom View",
   "key.category.radiance": "Radiance",
   "render_pipeline.module.tone_mapping.attribute.tonemap_mode": "Tonemapping Mode",
   "render_pipeline.module.tone_mapping.attribute.tonemap_mode.pbr_neutral": "PBR Neutral",
@@ -233,10 +235,12 @@
   ,"options.video.environment.moon_follow_sun": "Follow Sun"
   ,"options.video.environment.moon_inclination": "Inclination"
   ,"options.video.environment.moon_azimuth_offset": "Azimuth Offset"
+  ,"options.video.show_fps_overlay": "Show FPS Overlay"
 
   ,"radiance.settings.reset_defaults": "Reset to Defaults"
   ,"radiance.settings.welcome_message.on": "Welcome Message: On"
   ,"radiance.settings.welcome_message.off": "Welcome Message: Off"
+  ,"radiance.overlay.fps": "FPS: %s"
   ,"radiance.welcome_message.line1": "\u00a7bRadiance\u00a7r \u2014 Press \u00a7eO\u00a7r to open the settings menu."
   ,"radiance.welcome_message.line2": "\u00a77(Disable this message via Welcome Message in the O menu.)\u00a7r"
 }

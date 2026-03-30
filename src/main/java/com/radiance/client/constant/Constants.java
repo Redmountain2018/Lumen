@@ -134,7 +134,8 @@ public class Constants {
         WORLD_CLOUD(4),
         BOAT_WATER_MASK(5),
         END_PORTAL(6),
-        END_GATEWAY(7);
+        END_GATEWAY(7),
+        WORLD_WATER_MASK(8);
 
         private final int value;
 

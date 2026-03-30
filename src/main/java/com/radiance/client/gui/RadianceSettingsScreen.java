@@ -409,6 +409,16 @@ public class RadianceSettingsScreen extends GameOptionsScreen {
             value -> Options.setChunkBuildingTotalBatches(value, true));
         this.body.addSingleOptionEntry(chunkTotalBatches);
 
+        // === Debug ===
+        this.body.addEntry(
+            new CategoryVideoOptionEntry(Text.translatable(Options.CATEGORY_DEBUG), body));
+
+        SimpleOption<Boolean> showFpsOverlay = SimpleOption.ofBoolean(
+            Options.SHOW_FPS_OVERLAY_KEY,
+            Options.showFpsOverlay,
+            value -> Options.setShowFpsOverlay(value, true));
+        this.body.addSingleOptionEntry(showFpsOverlay);
+
         // === Pipeline ===
         this.body.addEntry(
             new CategoryVideoOptionEntry(Text.translatable(Options.CATEGORY_PIPELINE), body));

@@ -1,6 +1,7 @@
 package com.radiance.mixins.vulkan_render_integration;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.radiance.client.input.KeyInputHandler;
 import com.radiance.client.proxy.vulkan.BufferProxy;
 import com.radiance.client.proxy.vulkan.RendererProxy;
 import com.radiance.client.proxy.world.EntityProxy;
@@ -32,6 +33,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixins implements IGameRendererExt {
@@ -77,6 +79,14 @@ public class GameRendererMixins implements IGameRendererExt {
         }
 
         ci.cancel();
+    }
+
+    @Inject(method = "getFov(Lnet/minecraft/client/render/Camera;FZ)F", at = @At("RETURN"), cancellable = true)
+    private void applyZoomFov(Camera camera, float tickDelta, boolean changingFov,
+        CallbackInfoReturnable<Float> cir) {
+        if (KeyInputHandler.isZoomActive()) {
+            cir.setReturnValue(cir.getReturnValue() * 0.25F);
+        }
     }
 
     @Redirect(method = "renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V",

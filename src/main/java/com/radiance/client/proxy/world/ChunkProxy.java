@@ -9,7 +9,10 @@ import com.radiance.client.constant.Constants;
 import com.radiance.client.proxy.vulkan.BufferProxy;
 import com.radiance.mixin_related.extensions.vulkan_render_integration.IChunkBuilderBuiltChunkExt;
 import com.radiance.mixin_related.extensions.vulkan_render_integration.IChunkBuilderExt;
+import com.radiance.client.proxy.world.ChunkOccupancyData;
+import com.radiance.client.proxy.world.ChunkOccupancyRegistry;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -240,6 +243,7 @@ public class ChunkProxy {
         }
 
         Map<RenderLayer, BuiltBuffer> buffers = renderData.buffers;
+        ChunkOccupancyData occupancyData = ChunkOccupancyRegistry.take(renderData);
         builtChunk.setNoCullingBlockEntities(renderData.noCullingBlockEntities);
 
         if (buffers.isEmpty()) {
@@ -309,6 +313,18 @@ public class ChunkProxy {
                 long verticesAddr = memAddress(verticesBB);
                 int verticesBaseAddr = 0;
 
+                int occupancyElementCount = occupancyData == null ? 0 :
+                    occupancyData.sizeX() * occupancyData.sizeY() * occupancyData.sizeZ();
+                IntBuffer waterOccupancyIB = occupancyElementCount == 0 ? null : stack.mallocInt(occupancyElementCount);
+                IntBuffer solidOccupancyIB = occupancyElementCount == 0 ? null : stack.mallocInt(occupancyElementCount);
+                long waterOccupancyAddr = waterOccupancyIB == null ? 0L : memAddress(waterOccupancyIB);
+                long solidOccupancyAddr = solidOccupancyIB == null ? 0L : memAddress(solidOccupancyIB);
+
+                if (occupancyElementCount > 0) {
+                    waterOccupancyIB.put(occupancyData.waterOccupancy());
+                    solidOccupancyIB.put(occupancyData.solidOccupancy());
+                }
+
                 for (Map.Entry<RenderLayer, BuiltBuffer> entry : buffers.entrySet()) {
                     RenderLayer renderLayer = entry.getKey();
                     assert renderLayer.getDrawMode() == QUADS;
@@ -327,8 +343,10 @@ public class ChunkProxy {
 
                     int
                         geometryTypeID =
-                        Constants.GeometryTypes.getGeometryType(renderLayer, true)
-                            .getValue();
+                        renderLayer.name.equals("world_water_mask")
+                            ? Constants.GeometryTypes.WORLD_WATER_MASK.getValue()
+                            : Constants.GeometryTypes.getGeometryType(renderLayer, true)
+                                .getValue();
                     int
                         geometryTextureID =
                         textureManager.getTexture(
@@ -370,7 +388,13 @@ public class ChunkProxy {
                     vertexFormatAddr,
                     vertexCountAddr,
                     verticesAddr,
+                    waterOccupancyAddr,
+                    solidOccupancyAddr,
+                    occupancyData == null ? 0 : occupancyData.sizeX(),
+                    occupancyData == null ? 0 : occupancyData.sizeY(),
+                    occupancyData == null ? 0 : occupancyData.sizeZ(),
                     important);
+
             }
         }
 
@@ -384,12 +408,17 @@ public class ChunkProxy {
         int originY,
         int originZ,
         long index,
-        int size,
+        int geometryCount,
         long geometryTypes,
         long geometryTextures,
         long vertexFormats,
         long vertexCounts,
         long vertices,
+        long waterOccupancy,
+        long solidOccupancy,
+        int occupancySizeX,
+        int occupancySizeY,
+        int occupancySizeZ,
         boolean important);
 
     public static native boolean isChunkReady(long index);

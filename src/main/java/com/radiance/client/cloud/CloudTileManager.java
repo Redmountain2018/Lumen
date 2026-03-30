@@ -11,8 +11,8 @@ import java.nio.ByteBuffer;
 
 public final class CloudTileManager {
 
-    public static final int TILE_HALF_EXTENT = 32;
-    public static final int TILE_SIZE = TILE_HALF_EXTENT * 2 + 1; // 65
+    public static final int TILE_HALF_EXTENT = 48;
+    public static final int TILE_SIZE = TILE_HALF_EXTENT * 2 + 1; // 97
     public static final float CELL_SIZE = 12.0f;
 
     private static int cloudMaskTextureId = -1;
@@ -158,7 +158,8 @@ public final class CloudTileManager {
             || cellsHeight != lastMaskCellsHeight;
 
         if (needsUpload) {
-            // Fill 65x65 mask around center (Fancy uses +/-32)
+            // Fill 97x97 mask around center so RT clouds can stay visible farther away,
+            // then let the shader fade them out near the outer edge.
             for (int dz = -TILE_HALF_EXTENT; dz <= TILE_HALF_EXTENT; dz++) {
                 int tileZ = dz + TILE_HALF_EXTENT;
                 int o = Math.floorMod(centerCellZ + dz, cellsHeight);

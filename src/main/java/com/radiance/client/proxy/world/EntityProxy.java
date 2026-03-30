@@ -871,7 +871,7 @@ public class EntityProxy {
                     Identifier identifier = ((RenderLayer.MultiPhase) renderLayer).phases.texture.getId()
                         .orElse(MissingSprite.getMissingSpriteId());
                     int geometryTypeID = Constants.GeometryTypes.getGeometryType(renderLayer, entityRenderLayer.reflect)
-                        .getValue();
+                       .getValue();
                     int geometryTextureID = textureManager.getTexture(identifier).getGlId();
                     int vertexFormatID = Constants.VertexFormats.getValue(vertexBuffer.getDrawParameters().format());
                     int indexFormatID = Constants.DrawModes.getValue(vertexBuffer.getDrawParameters().mode());
@@ -1071,7 +1071,7 @@ public class EntityProxy {
                         .orElse(MissingSprite.getMissingSpriteId());
                 int
                     geometryTypeID =
-                    Constants.GeometryTypes.getGeometryType(renderLayer, entityRenderLayer.reflect)
+                   Constants.GeometryTypes.getGeometryType(renderLayer, entityRenderLayer.reflect)
                         .getValue();
                 int
                     geometryTextureID =
