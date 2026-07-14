@@ -239,4 +239,21 @@ public class Constants {
         }
     }
 
+    public enum PostRenderFlags {
+        WEATHER(0b0001),
+        PARTICLE(0b0010),
+        TEXT(0b0100),
+        NAME_TAG(0b1000);
+
+        private final int value;
+
+        PostRenderFlags(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
 }

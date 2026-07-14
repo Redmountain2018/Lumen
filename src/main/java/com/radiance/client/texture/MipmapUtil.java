@@ -64,6 +64,40 @@ public class MipmapUtil {
         return currentSource;
     }
 
+    public static NativeImage[] buildMipmapChain(NativeImage original) {
+        int maxLevel = 0;
+        int width = original.getWidth();
+        int height = original.getHeight();
+        while ((width >> 1) > 0 && (height >> 1) > 0) {
+            width >>= 1;
+            height >>= 1;
+            maxLevel++;
+        }
+
+        NativeImage[] levels = new NativeImage[maxLevel + 1];
+        levels[0] = original;
+        boolean hasAlpha = hasAlpha(original);
+
+        for (int level = 1; level <= maxLevel; level++) {
+            NativeImage previous = levels[level - 1];
+            NativeImage next = new NativeImage(previous.getFormat(), previous.getWidth() >> 1,
+                previous.getHeight() >> 1, false);
+
+            for (int x = 0; x < next.getWidth(); x++) {
+                for (int y = 0; y < next.getHeight(); y++) {
+                    next.setColorArgb(x, y, blend(previous.getColorArgb(x * 2, y * 2),
+                        previous.getColorArgb(x * 2 + 1, y * 2),
+                        previous.getColorArgb(x * 2, y * 2 + 1),
+                        previous.getColorArgb(x * 2 + 1, y * 2 + 1), hasAlpha));
+                }
+            }
+
+            levels[level] = next;
+        }
+
+        return levels;
+    }
+
     public static NativeImage[] getMipmapLevelsImages(NativeImage[] originals, int mipmap) {
         if (mipmap + 1 <= originals.length) {
             return originals;

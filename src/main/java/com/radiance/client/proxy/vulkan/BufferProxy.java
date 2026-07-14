@@ -277,6 +277,7 @@ public class BufferProxy {
         }
     }
 
+
     public static native void updateSkyUniform(long ptr);
 
     public static void updateSkyUniform(float baseColorR, float baseColorG, float baseColorB,
@@ -296,7 +297,8 @@ public class BufferProxy {
         float cloudPuffiness, float cloudDetailScale, float cloudDetailStrength,
         float cloudAnisotropy,
         float cloudShadowStrength, float cloudAmbientStrength, float cloudSunOcclusionStrength,
-        float cloudNoiseAffectsShadows) {
+        float cloudNoiseAffectsShadows,
+        float cloudScale, float cloudSizeScale, int cloudStyle) {
         try (MemoryStack stack = stackPush()) {
             int size = 304;
             ByteBuffer bb = stack.malloc(size);
@@ -405,7 +407,7 @@ public class BufferProxy {
             baseAddr += Integer.BYTES;
             bb.putInt(baseAddr, cloudCenterZ);
             baseAddr += Integer.BYTES;
-            bb.putInt(baseAddr, 0);
+            bb.putInt(baseAddr, (int)(cloudSizeScale * 100)); // cloudSizeScale percentage (e.g., 100 = 100%)
             baseAddr += Integer.BYTES;
 
             // cloudWrap
@@ -415,7 +417,7 @@ public class BufferProxy {
             baseAddr += Float.BYTES;
             bb.putFloat(baseAddr, cloudTicks);
             baseAddr += Float.BYTES;
-            bb.putFloat(baseAddr, 0.0f);
+            bb.putFloat(baseAddr, cloudScale);
             baseAddr += Float.BYTES;
 
             // cloudShape

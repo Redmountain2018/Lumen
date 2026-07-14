@@ -1,9 +1,22 @@
 package com.radiance.client.proxy.vulkan;
 
+import static org.lwjgl.system.MemoryUtil.memAddress;
+
 import com.radiance.client.constant.VulkanConstants;
+import com.radiance.client.texture.EmissionRecorder;
+import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.texture.NativeImage;
+import org.lwjgl.system.MemoryUtil;
 
 public class TextureProxy {
+
+    private record EmissionTileKey(int textureId, long tileKey) {
+    }
+
+    private static final Map<EmissionTileKey, EmissionRecorder.TileUpdate> emissionTileCache =
+        new ConcurrentHashMap<>();
 
     public synchronized static native int generateTextureId();
 
@@ -12,6 +25,7 @@ public class TextureProxy {
 
     public static void prepareImage(int id, int mipLevels, int width, int height,
         VulkanConstants.VkFormat format) {
+        clearEmissionTiles(id);
         prepareImage(id, mipLevels, width, height, format.getValue());
     }
 
@@ -31,8 +45,28 @@ public class TextureProxy {
         int height,
         int level);
 
-    // OMM: 0 = FULLY_OPAQUE, 1 = FULLY_TRANSPARENT, 2 = MIXED
     public synchronized static native void setTextureAlphaClass(int id, int alphaClass);
+
+    public static void uploadEmissionTile(EmissionRecorder.TileUpdate tileUpdate) {
+        if (tileUpdate == null) {
+            return;
+        }
+
+        emissionTileCache.put(new EmissionTileKey(tileUpdate.textureId, tileUpdate.tileKey),
+            tileUpdate);
+    }
+
+    public static void flushEmissionTiles() {
+        // Emission C++ native system not yet merged; tiles are cached for future use.
+    }
+
+    public static boolean hasEmissionTile(int textureId, long tileKey) {
+        return emissionTileCache.containsKey(new EmissionTileKey(textureId, tileKey));
+    }
+
+    private static void clearEmissionTiles(int textureId) {
+        emissionTileCache.keySet().removeIf(key -> key.textureId == textureId);
+    }
 
     public static void prepareImage(NativeImage.InternalFormat internalFormat, int id,
         int mipLevels, int width, int height) {

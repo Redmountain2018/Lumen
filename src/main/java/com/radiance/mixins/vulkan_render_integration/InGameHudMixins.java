@@ -17,11 +17,11 @@ public class InGameHudMixins {
     @Inject(method = "render", at = @At("TAIL"))
     private void renderFpsOverlay(DrawContext context, RenderTickCounter tickCounter,
         CallbackInfo ci) {
-        if (!Options.showFpsOverlay) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (!Options.showFpsOverlay || client.options.hudHidden) {
             return;
         }
 
-        MinecraftClient client = MinecraftClient.getInstance();
         if (client.textRenderer == null) {
             return;
         }

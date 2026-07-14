@@ -1,5 +1,6 @@
 package com.radiance.mixins.vulkan_render_integration;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.radiance.client.UnsafeManager;
 import com.radiance.mixin_related.extensions.vulkan_render_integration.ILightMapManagerExt;
 import net.minecraft.client.MinecraftClient;
@@ -105,16 +106,18 @@ public abstract class LightmapTextureManagerMixins implements ILightMapManagerEx
     // endregion
 
     // region <disable>
-    @Redirect(method = "disable()V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(II)V"))
-    public void cancelDisable(int texture, int glId) {
-
+    @Inject(method = "disable()V", at = @At(value = "HEAD"), cancellable = true)
+    public void cancelDisable(CallbackInfo ci) {
+        RenderSystem.setShaderTexture(2, 0);
+        ci.cancel();
     }
     // endregion
 
     // region <enable>
-    @Redirect(method = "enable()V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(II)V"))
-    public void cancelEnable(int texture, int glId) {
-
+    @Inject(method = "enable()V", at = @At(value = "HEAD"), cancellable = true)
+    public void cancelEnable(CallbackInfo ci) {
+        RenderSystem.setShaderTexture(2, 0);
+        ci.cancel();
     }
     // endregion
 

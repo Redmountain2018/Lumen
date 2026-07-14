@@ -58,6 +58,30 @@ public class CloudSettingsScreen extends GameOptionsScreen {
             v -> Options.setCloudDetailScalePercent(dim, v, true));
         this.body.addEntry(new RadianceSettingsScreen.SliderEntry(cloudDetailScaleSlider, body));
 
+        ResettableSliderWidget cloudScaleSlider = new ResettableSliderWidget(
+            0, 0, 150, 20,
+            10, 1000, Options.cloudScalePercent[dim], Options.PERCENT_DEFAULT,
+            v -> getGenericValueText(Text.translatable("options.video.environment.cloud_scale"),
+                Text.literal(v + "%")),
+            v -> Options.setCloudScalePercent(dim, v, true));
+        this.body.addEntry(new RadianceSettingsScreen.SliderEntry(cloudScaleSlider, body));
+
+        ResettableSliderWidget cloudSizeScaleSlider = new ResettableSliderWidget(
+            0, 0, 150, 20,
+            10, 1000, Options.cloudSizeScalePercent[dim], Options.PERCENT_DEFAULT,
+            v -> getGenericValueText(Text.translatable("options.video.environment.cloud_size_scale"),
+                Text.literal(v + "%")),
+            v -> Options.setCloudSizeScalePercent(dim, v, true));
+        this.body.addEntry(new RadianceSettingsScreen.SliderEntry(cloudSizeScaleSlider, body));
+
+        ResettableSliderWidget cloudStyleSlider = new ResettableSliderWidget(
+            0, 0, 150, 20,
+            0, 1, Options.cloudStyle[dim], 1,
+            v -> getGenericValueText(Text.translatable("options.video.environment.cloud_style"),
+                v == 1 ? Text.literal("SEUS PTGI") : Text.literal("MC Vanilla")),
+            v -> Options.setCloudStyle(dim, v, true));
+        this.body.addEntry(new RadianceSettingsScreen.SliderEntry(cloudStyleSlider, body));
+
         ResettableSliderWidget cloudDetailStrengthSlider = new ResettableSliderWidget(
             0, 0, 150, 20,
             0, 300, Options.cloudDetailStrengthPercent[dim], Options.CLOUD_DETAIL_STRENGTH_DEFAULT_PERCENT,

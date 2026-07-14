@@ -57,6 +57,17 @@ public abstract class NamespaceResourceManagerMixins {
     public void filterPbrTexturesFromAtlas(String startingPath,
         Predicate<Identifier> pathPredicate,
         CallbackInfoReturnable<Map<Identifier, Resource>> cir) {
+        // Only filter when the caller is an atlas source searching a specific
+        // subdirectory (textures/block/, textures/item/, textures/entity/).
+        // The PBR texture preloader (AuxiliaryTextures.prepareDecodedImagesAsync)
+        // uses the broad "textures" path and must NOT be filtered, otherwise PBR
+        // textures will never be cached and always fall back to flat default data.
+        if (!startingPath.startsWith("textures/block") &&
+            !startingPath.startsWith("textures/item") &&
+            !startingPath.startsWith("textures/entity")) {
+            return;
+        }
+
         Map<Identifier, Resource> original = cir.getReturnValue();
         if (original == null || original.isEmpty()) {
             return;

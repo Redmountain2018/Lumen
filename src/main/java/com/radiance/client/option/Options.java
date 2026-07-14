@@ -280,8 +280,13 @@ public class Options {
     public static final int[] cloudShadowStrengthPercent = new int[]{PERCENT_DEFAULT, PERCENT_DEFAULT, PERCENT_DEFAULT};
     public static final int[] cloudThicknessBlocks = new int[]{4, 4, 4};
     public static final int[] cloudDensityPercent = new int[]{PERCENT_DEFAULT, PERCENT_DEFAULT, PERCENT_DEFAULT};
+    // Cloud scale adjustments (percentage)
+    public static final int[] cloudScalePercent = new int[]{PERCENT_DEFAULT, PERCENT_DEFAULT, PERCENT_DEFAULT};
+    public static final int[] cloudSizeScalePercent = new int[]{PERCENT_DEFAULT, PERCENT_DEFAULT, PERCENT_DEFAULT};
     // Default: enable mottled cloud shadows in the overworld only.
     public static final int[] cloudNoiseAffectsShadows = new int[]{1, 0, 0};
+    // Cloud style: 0 = vanilla (MC original), 1 = SEUS PTGI
+    public static final int[] cloudStyle = new int[]{0, 0, 0};
     public static final int[] waterTintR = new int[]{WATER_TINT_R_DEFAULT, WATER_TINT_R_DEFAULT, WATER_TINT_R_DEFAULT};
     public static final int[] waterTintG = new int[]{WATER_TINT_G_DEFAULT, WATER_TINT_G_DEFAULT, WATER_TINT_G_DEFAULT};
     public static final int[] waterTintB = new int[]{WATER_TINT_B_DEFAULT, WATER_TINT_B_DEFAULT, WATER_TINT_B_DEFAULT};
@@ -1009,6 +1014,32 @@ public class Options {
         }
     }
 
+    public static float getCloudScale(int dim) {
+        return cloudScalePercent[clampDimIndex(dim)] / 100.0f;
+    }
+
+    public static void setCloudScalePercent(int dim, int value, boolean write) {
+        // Clamp to 10% - 1000% (10x around default 100%)
+        int clamped = Math.max(10, Math.min(1000, value));
+        cloudScalePercent[clampDimIndex(dim)] = clamped;
+        if (write) {
+            overwriteConfig();
+        }
+    }
+
+    public static float getCloudSizeScale(int dim) {
+        return cloudSizeScalePercent[clampDimIndex(dim)] / 100.0f;
+    }
+
+    public static void setCloudSizeScalePercent(int dim, int value, boolean write) {
+        // Clamp to 10% - 1000% (10x around default 100%)
+        int clamped = Math.max(10, Math.min(1000, value));
+        cloudSizeScalePercent[clampDimIndex(dim)] = clamped;
+        if (write) {
+            overwriteConfig();
+        }
+    }
+
     public static boolean getCloudNoiseAffectsShadows(int dim) {
         return cloudNoiseAffectsShadows[clampDimIndex(dim)] != 0;
     }
@@ -1020,6 +1051,18 @@ public class Options {
         }
     }
 
+
+    public static int getCloudStyle(int dim) {
+        return cloudStyle[clampDimIndex(dim)];
+    }
+
+    public static void setCloudStyle(int dim, int value, boolean write) {
+        int clamped = Math.max(0, Math.min(1, value));
+        cloudStyle[clampDimIndex(dim)] = clamped;
+        if (write) {
+            overwriteConfig();
+        }
+    }
 
     public static int getCloudThicknessBlocks(int dim) {
         return cloudThicknessBlocks[clampDimIndex(dim)];

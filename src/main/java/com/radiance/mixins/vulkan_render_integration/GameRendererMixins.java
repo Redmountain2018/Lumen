@@ -8,8 +8,6 @@ import com.radiance.client.proxy.world.EntityProxy;
 import com.radiance.mixin_related.extensions.vulkan_render_integration.IGameRendererExt;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
-import net.minecraft.client.gl.ShaderLoader;
-import net.minecraft.client.gl.ShaderProgramKey;
 import net.minecraft.client.render.BufferBuilderStorage;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
@@ -21,7 +19,6 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.ObjectAllocator;
 import net.minecraft.client.util.Pool;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.resource.ResourceFactory;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.spongepowered.asm.mixin.Final;
@@ -56,17 +53,6 @@ public class GameRendererMixins implements IGameRendererExt {
     private BufferBuilderStorage buffers;
     @Unique
     private Matrix4f viewMatrix;
-
-    @Redirect(method = "preloadPrograms(Lnet/minecraft/resource/ResourceFactory;)V",
-        at = @At(value = "INVOKE",
-            target =
-                "Lnet/minecraft/client/gl/ShaderLoader;preload(Lnet/minecraft/resource/ResourceFactory;"
-                    +
-                    "[Lnet/minecraft/client/gl/ShaderProgramKey;)V"))
-    public void cancelPreloadShader(ShaderLoader instance, ResourceFactory factory,
-        ShaderProgramKey[] keys) {
-
-    }
 
     @Inject(method = "renderBlur()V", at = @At(value = "HEAD"), cancellable = true)
     public void redirectRenderBlur(CallbackInfo ci) {

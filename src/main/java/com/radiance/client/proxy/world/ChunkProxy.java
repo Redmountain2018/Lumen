@@ -9,13 +9,12 @@ import com.radiance.client.constant.Constants;
 import com.radiance.client.proxy.vulkan.BufferProxy;
 import com.radiance.mixin_related.extensions.vulkan_render_integration.IChunkBuilderBuiltChunkExt;
 import com.radiance.mixin_related.extensions.vulkan_render_integration.IChunkBuilderExt;
-import com.radiance.client.proxy.world.ChunkOccupancyData;
-import com.radiance.client.proxy.world.ChunkOccupancyRegistry;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -33,7 +32,7 @@ import net.minecraft.client.render.chunk.ChunkRendererRegion;
 import net.minecraft.client.render.chunk.ChunkRendererRegionBuilder;
 import net.minecraft.client.render.chunk.SectionBuilder;
 import net.minecraft.client.texture.MissingSprite;
-import net.minecraft.client.texture.TextureManager;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.Direction;
@@ -56,14 +55,12 @@ public class ChunkProxy {
     };
     private static final Map<Integer, ChunkBuilder.BuiltChunk> rebuildQueue = new ConcurrentHashMap<>();
     private static final List<Future<?>> rebuildTasks = new ArrayList<>();
-    private static final int numNormalChunkRebuildThreads = 1;
+    private static final Set<Integer> inProgressIndices = ConcurrentHashMap.newKeySet();
+    private static final Map<String, Integer> textureIdCache = new ConcurrentHashMap<>();
+    private static final int maxBackgroundThreads = Math.max(1,
+        Math.min(Runtime.getRuntime().availableProcessors() - 1, 2));
     private static final int numImportantChunkRebuildThreads = 1;
-    private static final long worldLoadSmoothDurationNanos = TimeUnit.SECONDS.toNanos(4);
-    private static final int maxImportantTasksPerFrameWarmup = 1;
-    private static final int maxImportantTasksPerFrameNormal = 1;
-    private static final double importantDistanceSqWarmup = 256.0;
-    private static final double importantDistanceSqNormal = 768.0;
-    private static volatile long smoothImportantUntilNanos = 0L;
+    private static final double importantDistanceSq = 768.0;
     private static final ExecutorService
         importantChunkRebuildExecutor =
         Executors.newFixedThreadPool(numImportantChunkRebuildThreads, r -> {
@@ -76,7 +73,7 @@ public class ChunkProxy {
         ThreadLocal.withInitial(BlockBufferAllocatorStorage::new);
     public static int builtChunkNum = 0;
     private static ExecutorService backgroundChunkRebuildExecutor = Executors.newFixedThreadPool(
-        numNormalChunkRebuildThreads, r -> {
+        maxBackgroundThreads, r -> {
             Thread thread = new Thread(r);
             thread.setPriority(Thread.NORM_PRIORITY);
             return thread;
@@ -86,16 +83,7 @@ public class ChunkProxy {
 
     public static void init(int numChunks) {
         clear();
-        resetWorldLoadSmoothing();
         initNative(numChunks);
-    }
-
-    private static void resetWorldLoadSmoothing() {
-        smoothImportantUntilNanos = System.nanoTime() + worldLoadSmoothDurationNanos;
-    }
-
-    private static boolean inWorldLoadSmoothingWindow() {
-        return System.nanoTime() < smoothImportantUntilNanos;
     }
 
     public static AutoCloseable scopedBlockBufferAllocatorStorage() {
@@ -113,7 +101,7 @@ public class ChunkProxy {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        backgroundChunkRebuildExecutor = Executors.newFixedThreadPool(numNormalChunkRebuildThreads,
+        backgroundChunkRebuildExecutor = Executors.newFixedThreadPool(maxBackgroundThreads,
             r -> {
                 Thread thread = new Thread(r);
                 thread.setPriority(Thread.NORM_PRIORITY);
@@ -122,6 +110,8 @@ public class ChunkProxy {
 
         rebuildQueue.clear();
         rebuildTasks.clear();
+        inProgressIndices.clear();
+        textureIdCache.clear();
     }
 
     public static void enqueueRebuild(ChunkBuilder.BuiltChunk chunk) {
@@ -131,15 +121,12 @@ public class ChunkProxy {
     public static void rebuild(Camera camera) {
 
         BlockPos blockPos = camera.getBlockPos();
-        boolean smoothing = inWorldLoadSmoothingWindow();
-        int maxImportantTasksPerFrame = smoothing ?
-            maxImportantTasksPerFrameWarmup :
-            maxImportantTasksPerFrameNormal;
-        double importantDistanceSq = smoothing ? importantDistanceSqWarmup : importantDistanceSqNormal;
-        int importantTaskCount = 0;
-
         for (ChunkBuilder.BuiltChunk builtChunk : rebuildQueue.values()) {
             if (builtChunk == null) {
+                continue;
+            }
+
+            if (inProgressIndices.contains(builtChunk.index)) {
                 continue;
             }
 
@@ -150,22 +137,29 @@ public class ChunkProxy {
                     chunkCenterPos =
                     builtChunk.getOrigin()
                         .add(8, 8, 8);
-                boolean forceImportant = builtChunk.needsImportantRebuild();
-                boolean shouldPrioritize = forceImportant ||
+                boolean isImportant = builtChunk.needsImportantRebuild() ||
                     chunkCenterPos.getSquaredDistance(blockPos) < importantDistanceSq;
 
-                boolean isImportant = shouldPrioritize &&
-                    (forceImportant || importantTaskCount < maxImportantTasksPerFrame);
+                inProgressIndices.add(builtChunk.index);
 
                 if (isImportant) {
+                    final int idx = builtChunk.index;
                     Future<?> rebuildTask = importantChunkRebuildExecutor.submit(() -> {
-                        rebuildSingle(builtChunk, true);
+                        try {
+                            rebuildSingle(builtChunk, true);
+                        } finally {
+                            inProgressIndices.remove(idx);
+                        }
                     });
                     rebuildTasks.add(rebuildTask);
-                    importantTaskCount++;
                 } else {
+                    final int idx = builtChunk.index;
                     backgroundChunkRebuildExecutor.execute(() -> {
-                        rebuildSingle(builtChunk, false);
+                        try {
+                            rebuildSingle(builtChunk, false);
+                        } finally {
+                            inProgressIndices.remove(idx);
+                        }
                     });
                 }
             }
@@ -235,12 +229,9 @@ public class ChunkProxy {
                 (float) (vec3d.z - builtChunk.getOrigin()
                     .getZ()));
 
-        SectionBuilder.RenderData renderData;
-        synchronized (ChunkBuilder.class) {
-            renderData =
-                ((IChunkBuilderExt) chunkBuilder).neoVoxelRT$getSectionBuilder()
-                    .build(chunkSectionPos, chunkRendererRegion, vertexSorter, storage);
-        }
+        SectionBuilder.RenderData renderData =
+            ((IChunkBuilderExt) chunkBuilder).neoVoxelRT$getSectionBuilder()
+                .build(chunkSectionPos, chunkRendererRegion, vertexSorter, storage);
 
         Map<RenderLayer, BuiltBuffer> buffers = renderData.buffers;
         ChunkOccupancyData occupancyData = ChunkOccupancyRegistry.take(renderData);
@@ -281,7 +272,7 @@ public class ChunkProxy {
 
                 @Override
                 public boolean isEmpty(RenderLayer layer) {
-                    return false;
+                    return layer == null || !buffers.containsKey(layer);
                 }
             };
             builtChunk.data.set(chunkData);
@@ -336,11 +327,6 @@ public class ChunkProxy {
                         .indexCount() == vertexBuffer.getDrawParameters()
                         .vertexCount() / 4 * 6;
 
-                    TextureManager
-                        textureManager =
-                        MinecraftClient.getInstance()
-                            .getTextureManager();
-
                     int
                         geometryTypeID =
                         renderLayer.name.equals("world_water_mask")
@@ -349,10 +335,7 @@ public class ChunkProxy {
                                 .getValue();
                     int
                         geometryTextureID =
-                        textureManager.getTexture(
-                                ((RenderLayer.MultiPhase) renderLayer).phases.texture.getId()
-                                    .orElse(MissingSprite.getMissingSpriteId()))
-                            .getGlId();
+                        getCachedTextureId(renderLayer);
                     int vertexFormatID = Constants.VertexFormats.getValue(
                         vertexBuffer.getDrawParameters()
                             .format());
@@ -402,6 +385,14 @@ public class ChunkProxy {
             entry.getValue()
                 .close();
         }
+    }
+
+    private static int getCachedTextureId(RenderLayer renderLayer) {
+        return textureIdCache.computeIfAbsent(renderLayer.name, key -> {
+            Identifier texId = ((RenderLayer.MultiPhase) renderLayer).phases.texture.getId()
+                .orElse(MissingSprite.getMissingSpriteId());
+            return MinecraftClient.getInstance().getTextureManager().getTexture(texId).getGlId();
+        });
     }
 
     private static native void rebuildSingle(int originX,

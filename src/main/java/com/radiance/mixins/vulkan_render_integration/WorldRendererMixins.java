@@ -369,11 +369,16 @@ public abstract class WorldRendererMixins {
 
         float cloudPuffiness = Options.getCloudPuffiness(envDim);
         float cloudDetailScale = Options.getCloudDetailScale(envDim);
+        // Cloud scale adjustments (percentage multipliers)
+        float cloudScale = Options.getCloudScale(envDim);          // 1.0 = 100%
+        float cloudSizeScale = Options.getCloudSizeScale(envDim);  // 1.0 = 100%
         // Fast = analytic flat slab (detailStrength=0); Fancy = 3D FBM stepped volumetric.
         float cloudDetailStrength = (cloudRenderMode == CloudRenderMode.FANCY)
             ? Options.getCloudDetailStrength(envDim)
             : 0.0f;
         float cloudAnisotropy = Options.getCloudAnisotropy(envDim);
+        int cloudStyle = Options.getCloudStyle(envDim);
+        cloudAnisotropy = (float) cloudStyle; // 将云风格存储在 anisotropy 字段中
         float cloudShadowStrength = Options.getCloudShadowStrength(envDim);
         float cloudDensity = Options.getCloudDensity(envDim);
         float cloudNoiseAffectsShadows = Options.getCloudNoiseAffectsShadows(envDim) ? 1.0F : 0.0F;
@@ -459,7 +464,8 @@ public abstract class WorldRendererMixins {
             cloudOffsetX, cloudOffsetZ, cloudTicks,
             cloudPuffiness, cloudDetailScale, cloudDetailStrength, cloudAnisotropy,
             cloudShadowStrength, cloudAmbientStrength, cloudSunOcclusionStrength,
-            cloudNoiseAffectsShadows);
+            cloudNoiseAffectsShadows,
+            cloudScale, cloudSizeScale, cloudStyle);
 
         // Chunks
         ChunkProxy.rebuild(camera);

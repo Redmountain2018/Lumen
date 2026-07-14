@@ -7,9 +7,11 @@ import com.radiance.client.pipeline.Pipeline;
 import com.radiance.client.proxy.vulkan.RendererProxy;
 import com.radiance.client.proxy.vulkan.TextureProxy;
 import com.radiance.client.proxy.world.ChunkProxy;
+import com.radiance.client.texture.AuxiliaryTextureReloader;
 import java.util.Optional;
 import java.util.function.Consumer;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.RunArgs;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.GlTimer;
 import net.minecraft.client.gl.ShaderLoader;
@@ -35,6 +37,9 @@ public class MinecraftClientMixins {
     @Shadow
     @Final
     private Window window;
+
+    @Shadow
+    private ReloadableResourceManagerImpl resourceManager;
 
     //region <isAmbientOcclusionEnabled>
     @Inject(method = "isAmbientOcclusionEnabled()Z", at = @At(value = "HEAD"), cancellable = true)
@@ -65,6 +70,15 @@ public class MinecraftClientMixins {
         Pipeline.build();
     }
 
+    @Inject(method = "<init>(Lnet/minecraft/client/RunArgs;)V",
+        at = @At(value = "FIELD",
+            target = "Lnet/minecraft/client/MinecraftClient;resourceManager:Lnet/minecraft/resource/ReloadableResourceManagerImpl;",
+            opcode = Opcodes.PUTFIELD,
+            shift = At.Shift.AFTER))
+    private void registerAuxiliaryTextureReloader(RunArgs args, CallbackInfo ci) {
+        this.resourceManager.registerReloader(new AuxiliaryTextureReloader());
+    }
+
     @Redirect(method = "<init>(Lnet/minecraft/client/RunArgs;)V",
         at = @At(value = "NEW", target = "net/minecraft/client/gl/WindowFramebuffer"))
     public WindowFramebuffer cancelNewFramebuffer(int width, int height) {
@@ -76,27 +90,6 @@ public class MinecraftClientMixins {
             target = "Lnet/minecraft/client/MinecraftClient;framebuffer:Lnet/minecraft/client/gl/Framebuffer;",
             opcode = org.objectweb.asm.Opcodes.PUTFIELD))
     public void writeNullFramebuffer(MinecraftClient instance, Framebuffer value) {
-    }
-
-    @Redirect(method = "<init>(Lnet/minecraft/client/RunArgs;)V", at = @At(value = "NEW", target = "net/minecraft/client/gl/ShaderLoader"))
-    public ShaderLoader cancelNewShaderLoader(TextureManager textureManager, Consumer<?> onError) {
-        return UnsafeManager.INSTANCE.allocateInstance(ShaderLoader.class);
-    }
-
-    @Redirect(method = "<init>(Lnet/minecraft/client/RunArgs;)V",
-        at = @At(value = "FIELD",
-            target = "Lnet/minecraft/client/MinecraftClient;shaderLoader:Lnet/minecraft/client/gl/ShaderLoader;",
-            opcode = org.objectweb.asm.Opcodes.PUTFIELD))
-    public void writeNullShaderLoader(MinecraftClient instance, ShaderLoader value) {
-    }
-
-    @Redirect(method = "<init>(Lnet/minecraft/client/RunArgs;)V",
-        at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/resource/ReloadableResourceManagerImpl;registerReloader" +
-                "(Lnet/minecraft/resource/ResourceReloader;)V",
-            ordinal = 2))
-    public void cancelShaderLoaderRegister(ReloadableResourceManagerImpl instance,
-        ResourceReloader reloader) {
     }
 
     @Redirect(method = "<init>(Lnet/minecraft/client/RunArgs;)V",
