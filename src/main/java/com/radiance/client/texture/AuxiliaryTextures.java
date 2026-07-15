@@ -292,6 +292,10 @@ public static void loadAndUpload(NativeImage source, INativeImageExt sourceExt, 
         String path = auxiliaryIdentifier.getPath();
         if (this == FLAG) {
             path = path.replaceFirst("^textures/flag/", "textures/");
+        } else if (this == SPECULAR) {
+            path = path.replaceFirst("^textures/specular/", "textures/");
+        } else if (this == NORMAL) {
+            path = path.replaceFirst("^textures/normal/", "textures/");
         }
 
         int dotIndex = path.lastIndexOf('.');
@@ -387,7 +391,13 @@ public static void loadAndUpload(NativeImage source, INativeImageExt sourceExt, 
     private static boolean isTrackedTexturePath(String path) {
         return path.startsWith("textures/block/")
             || path.startsWith("textures/item/")
-            || path.startsWith("textures/entity/");
+            || path.startsWith("textures/entity/")
+            || path.startsWith("textures/specular/block/")
+            || path.startsWith("textures/specular/item/")
+            || path.startsWith("textures/specular/entity/")
+            || path.startsWith("textures/normal/block/")
+            || path.startsWith("textures/normal/item/")
+            || path.startsWith("textures/normal/entity/");
     }
 
     private static boolean isTrackedFlagPath(String path) {

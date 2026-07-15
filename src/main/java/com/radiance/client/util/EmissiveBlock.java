@@ -15,8 +15,8 @@ public enum EmissiveBlock {
     LAVA("lava", 1.0f, () -> Options.emissionLava, v -> Options.emissionLava = v),
     FIRE("fire", 1.0f, () -> Options.emissionFire, v -> Options.emissionFire = v),
     SOUL_FIRE("soul_fire", 1.0f, () -> Options.emissionSoulFire, v -> Options.emissionSoulFire = v),
-    TORCH("torch", 1.0f, () -> Options.emissionTorch, v -> Options.emissionTorch = v),
-    SOUL_TORCH("soul_torch", 1.0f, () -> Options.emissionSoulTorch, v -> Options.emissionSoulTorch = v),
+    TORCH("torch", 3.0f, () -> Options.emissionTorch, v -> Options.emissionTorch = v),
+    SOUL_TORCH("soul_torch", 3.0f, () -> Options.emissionSoulTorch, v -> Options.emissionSoulTorch = v),
     LANTERN("lantern", 1.0f, () -> Options.emissionLantern, v -> Options.emissionLantern = v),
     SOUL_LANTERN("soul_lantern", 1.0f, () -> Options.emissionSoulLantern, v -> Options.emissionSoulLantern = v),
     CAMPFIRE("campfire", 1.0f, () -> Options.emissionCampfire, v -> Options.emissionCampfire = v),
@@ -128,5 +128,10 @@ public enum EmissiveBlock {
     
     public static boolean isEmissive(Block block) {
         return BLOCK_MAP.containsKey(block);
+    }
+
+    public static int getIndex(Block block) {
+        EmissiveBlock eb = BLOCK_MAP.get(block);
+        return eb != null ? eb.ordinal() : -1;
     }
 }

@@ -74,7 +74,7 @@ public class BlockModelRendererMixins {
         }
 
         if (EmissiveBlock.isEmissive(state.getBlock())) {
-            emission = Math.max(emission, EmissiveBlock.getEmission(state.getBlock()));
+            emission = Math.max(emission, (float) (EmissiveBlock.getIndex(state.getBlock()) + 1));
         }
 
         PBRVertexConsumer pbrVertexConsumer = null;

@@ -34,7 +34,7 @@ public class EmissiveBlockSettingsScreen extends GameOptionsScreen {
         
         ResettableSliderWidget slider = new ResettableSliderWidget(
             0, 0, 150, 20,
-            0, 500, initialValue, (int)(block.getDefaultValue() * 100),
+            0, 1000, initialValue, (int)(block.getDefaultValue() * 100),
             v -> getGenericValueText(
                 Text.translatable(key),
                 Text.literal(String.format("%.2f", v / 100.0f))),

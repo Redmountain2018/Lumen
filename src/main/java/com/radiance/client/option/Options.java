@@ -234,8 +234,8 @@ public class Options {
     public static float emissionLava = 1.0f;
     public static float emissionFire = 1.0f;
     public static float emissionSoulFire = 1.0f;
-    public static float emissionTorch = 1.0f;
-    public static float emissionSoulTorch = 1.0f;
+    public static float emissionTorch = 3.0f;
+    public static float emissionSoulTorch = 3.0f;
     public static float emissionLantern = 1.0f;
     public static float emissionSoulLantern = 1.0f;
     public static float emissionCampfire = 1.0f;

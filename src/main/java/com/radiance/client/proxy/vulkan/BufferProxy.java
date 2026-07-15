@@ -9,6 +9,7 @@ import static org.lwjgl.system.MemoryUtil.memSet;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.radiance.client.constant.Constants;
 import com.radiance.client.texture.TextureTracker;
+import com.radiance.client.util.EmissiveBlock;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Map;
@@ -205,7 +206,7 @@ public class BufferProxy {
         Matrix4f effectedViewMatrix, Matrix4f projectionMatrix, int overlayTextureID, Fog fog,
         ClientWorld world, int endSkyTextureID, int endPortalTextureID, int rippleTextureID) {
         try (MemoryStack stack = stackPush()) {
-            int size = 560;
+            int size = 688;
             ByteBuffer bb = stack.malloc(size);
             long addr = memAddress(bb);
             int baseAddr = 0;
@@ -272,6 +273,20 @@ public class BufferProxy {
             bb.putInt(baseAddr, rippleTextureID);
             baseAddr += Integer.BYTES;
             baseAddr += Integer.BYTES;
+
+            // Emission multipliers for EmissiveBlock index lookup (8 vec4 = 32 floats, must match EmissiveBlock.ordinal())
+            EmissiveBlock[] emissiveBlocks = EmissiveBlock.values();
+            for (int i = 0; i < 8; i++) {
+                float v0 = i * 4 < emissiveBlocks.length ? emissiveBlocks[i * 4].getValue() : 0.0f;
+                float v1 = i * 4 + 1 < emissiveBlocks.length ? emissiveBlocks[i * 4 + 1].getValue() : 0.0f;
+                float v2 = i * 4 + 2 < emissiveBlocks.length ? emissiveBlocks[i * 4 + 2].getValue() : 0.0f;
+                float v3 = i * 4 + 3 < emissiveBlocks.length ? emissiveBlocks[i * 4 + 3].getValue() : 0.0f;
+                bb.putFloat(baseAddr, v0);
+                bb.putFloat(baseAddr + 4, v1);
+                bb.putFloat(baseAddr + 8, v2);
+                bb.putFloat(baseAddr + 12, v3);
+                baseAddr += 16;
+            }
 
             updateWorldUniform(addr);
         }

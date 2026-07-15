@@ -1,6 +1,7 @@
 package com.radiance.mixins.vulkan_render_integration;
 
 import com.radiance.client.option.Options;
+import com.radiance.client.util.EmissiveBlock;
 import com.radiance.client.vertex.PBRVertexConsumer;
 import static net.minecraft.client.render.block.FluidRenderer.shouldRenderSide;
 
@@ -140,7 +141,7 @@ public abstract class FluidRendererMixins {
             isWaterMask = layer != null && "world_water_mask".equals(layer.name);
         }
         int tintColor = isLava ? 16777215 : BiomeColors.getWaterColor(world, pos);
-        float emission = isLava ? Options.emissionLava : 0.0F;
+        float emission = isLava ? (float)(EmissiveBlock.LAVA.ordinal() + 1) : 0.0F;
         float red = (tintColor >> 16 & 0xFF) / 255.0F;
         float green = (tintColor >> 8 & 0xFF) / 255.0F;
         float blue = (tintColor & 0xFF) / 255.0F;
